@@ -1,0 +1,29 @@
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment variables file (contains secrets)
+config/.env
+
+# Virtual environments
+venv/
+env/
+
+build/
+dist
+
+# data folders
+output/
+input/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+*.exe
+*.spec
+*.zip
+*.xlsx
+*.db
