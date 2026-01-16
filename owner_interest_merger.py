@@ -260,7 +260,16 @@ def run_owner_interest_merger(df, file_name, output_folder):
                 continue
 
             # Step A: define unique row including First Name & numeric fields
-            unique_key_cols = ["Owner (Standardized)", "First Name", "Address", "City", "State", "# of Interests", "County", "Target State"]
+            unique_key_cols = [
+                "__norm_owner",
+                "First Name"
+                "__norm_address",
+                "__norm_city",
+                "__norm_state",
+                "__norm_interests",
+                "__norm_county",
+                "__norm_target_state",
+            ]
             group["__unique_row_key"] = group[unique_key_cols].astype(str).agg("|".join, axis=1)
 
             # Step B: count each unique row
