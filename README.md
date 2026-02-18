@@ -99,6 +99,67 @@ Only when these conditions are met should merging be performed.
 * Adds review remarks when Contact Type adjustments may be required
 
 ---
+## 🧠 Logic Flow
+1. User provides one or more Excel owner files in the input folder.
+2. App reads each file and prepares the data for processing.
+3. App validates required fields before continuing:
+   - Owner (Standardized)
+   - \# of Interests
+   - Total Value - Low ($)
+   - County
+   - Target State
+  If any required value is missing → file is flagged and processing stops.
+4. App standardizes owner and address data to ensure accurate comparisons:
+   - Converts text to uppercase
+   - Expands common abbreviations (e.g., LLC → LIMITED LIABILITY COMPANY, ST → STREET)
+   - Removes punctuation and spaces
+5. App groups records that appear to represent the same owner using an exact match of:
+   - Standardized Owner
+   - Standardized Address
+   - Standardized City
+   - Standardized State
+   - Standardized County
+   - Standardized Target State
+   - \# of Interests
+6. App checks for conflicting interest counts before merging:
+   - If the same owner/location has multiple different values of # of Interests
+     - the entire group is excluded from merging and kept as-is (Merged = N).
+7. App determines whether a group is eligible to merge:
+   - If the group contains only one record → no merge (Merged = N)
+   - If the group contains two or more records → continue to Contact Type rules
+8. If the group contains no COMBINED INDIVIDUALS:
+   - All records in the group are merged into one
+   - The following values are summed:
+     - \# of Interests
+     - PDP Value ($)
+     - Total Value - Low ($)
+     - Total Value - High ($)
+9. If the group contains any COMBINED INDIVIDUALS:
+   - If the group has fewer than 4 records → no merge
+   - If the group has 4 or more records:
+     - Only rows that repeat under the same identity are merged
+     - Identity is determined by:
+       - Standardized Owner
+       - First Name
+       - Standardized Address, City, State
+       - \# of Interests
+       - County and Target State
+     - Non-repeating rows remain unmerged
+10. For every merged record, app creates an Owner Merge Info field that lists:
+    - Owner name
+    - Owner ID
+    - \# of Interests
+    - Total Value - Low ($)
+    This provides a clear audit trail of what was combined.
+11. App adds a reviewer note (Remarks) when all values across the group are identical and none are COMBINED INDIVIDUALS:
+    - “Consider modifying CTT to COMBINED INDIVIDUALS”
+12. App merges eligible records and produces consolidated rows (Merged = Y).
+13. App generates audit outputs:
+    - Merged file for downstream loading
+    - Duplicate reference file containing only groups that were merged
+14. App outputs final files for human review prior to BUDB loading to ensure accuracy before any downstream use.
+
+---
 
 ## 📝 Requirements
 
